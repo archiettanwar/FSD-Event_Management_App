@@ -1,59 +1,131 @@
-let events = [
-  { id: 1, title: "Tech Fest 2026", description: "A technology event for students.", date: "2026-11-15", time: "10:00", location: "Mumbai" },
-  { id: 2, title: "React Workshop", description: "Learn React from basics to advanced.", date: "2026-11-20", time: "14:00", location: "Pune" },
-  { id: 3, title: "AI Conference", description: "Explore the latest AI developments.", date: "2026-11-25", time: "09:30", location: "Bengaluru" },
-];
+const Event = require("../models/Event");
 
-function getEvents(req, res) {
-  res.status(200).json(events);
-}
-
-function getEventById(req, res) {
-  const id = Number(req.params.id);
-  const event = events.find((event) => event.id === id);
-  if (!event) return res.status(404).json({ message: "Event not found" });
-  res.status(200).json(event);
-}
-
-function createEvent(req, res) {
-  const { title, description, date, time, location } = req.body;
-  if (!title?.trim() || !description?.trim() || !date?.trim() || !time?.trim() || !location?.trim()) {
-    return res.status(400).json({ message: "All event fields are required" });
+async function getEvents(req, res) {
+  try {
+    const events = await Event.find().sort({ date: 1 });
+    res.status(200).json(events);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
   }
-  const newEvent = {
-    id: events.length ? Math.max(...events.map((event) => event.id)) + 1 : 1,
-    title: title.trim(),
-    description: description.trim(),
-    date: date.trim(),
-    time: time.trim(),
-    location: location.trim(),
-  };
-  events.push(newEvent);
-  res.status(201).json({ message: "Event created successfully", event: newEvent });
 }
 
-function updateEvent(req, res) {
-  const id = Number(req.params.id);
-  const index = events.findIndex((event) => event.id === id);
-  if (index === -1) return res.status(404).json({ message: "Event not found" });
-  
-  const { title, description, date, time, location } = req.body;
-  if (!title?.trim() || !description?.trim() || !date?.trim() || !time?.trim() || !location?.trim()) {
-    return res.status(400).json({ message: "All event fields are required" });
+async function getEventById(req, res) {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ message: "Event not found" });
+    res.status(200).json(event);
+  } catch (err) {
+    if (err.name === "CastError")
+      return res.status(400).json({ message: "Invalid event ID" });
+    res.status(500).json({ message: "Server error", error: err.message });
   }
-  
-  events[index] = { id, title: title.trim(), description: description.trim(), date: date.trim(), time: time.trim(), location: location.trim() };
-  res.status(200).json({ message: "Event updated successfully", event: events[index] });
 }
 
-function deleteEvent(req, res) {
-  const id = Number(req.params.id);
-  const index = events.findIndex((event) => event.id === id);
-  if (index === -1) return res.status(404).json({ message: "Event not found" });
-  
-  const deletedEvent = events[index];
-  events = events.filter((event) => event.id !== id);
-  res.status(200).json({ message: "Event deleted successfully", event: deletedEvent });
+async function createEvent(req, res) {
+  try {
+    const { title, description, date, time, location } = req.body;
+    if (
+      !title || !String(title).trim() ||
+      !description || !String(description).trim() ||
+      !date ||
+      !time || !String(time).trim() ||
+      !location || !String(location).trim()
+    ) {
+      return res.status(400).json({ message: "All event fields (title, description, date, time, location) are required" });
+    }
+    const event = await Event.create({
+      title: String(title).trim(),
+      description: String(description).trim(),
+      date,
+      time: String(time).trim(),
+      location: String(location).trim(),
+    });
+
+    // Broadcast real-time Socket.IO notification to all connected clients (Screenshot 1)
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("eventNotification", {
+        type: "CREATE",
+        title: "New Event Created!",
+        message: `Admin created event: "${event.title}" scheduled for ${new Date(event.date).toLocaleDateString()}.`,
+        event,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    res.status(201).json({ message: "Event created successfully", event });
+  } catch (err) {
+    if (err.name === "ValidationError")
+      return res.status(400).json({ message: err.message });
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+}
+
+async function updateEvent(req, res) {
+  try {
+    if (!req.body || Object.keys(req.body).length === 0) {
+      return res.status(400).json({ message: "Request body cannot be empty" });
+    }
+    const { title, description, date, time, location } = req.body;
+    const updateData = {};
+    if (title !== undefined) updateData.title = String(title).trim();
+    if (description !== undefined) updateData.description = String(description).trim();
+    if (date !== undefined) updateData.date = date;
+    if (time !== undefined) updateData.time = String(time).trim();
+    if (location !== undefined) updateData.location = String(location).trim();
+
+    const event = await Event.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true, runValidators: true }
+    );
+    if (!event) return res.status(404).json({ message: "Event not found" });
+
+    // Broadcast real-time Socket.IO notification to all connected clients (Screenshot 2)
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("eventNotification", {
+        type: "UPDATE",
+        title: "Event Updated!",
+        message: `Admin updated event details for: "${event.title}".`,
+        event,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    res.status(200).json({ message: "Event updated successfully", event });
+  } catch (err) {
+    if (err.name === "CastError")
+      return res.status(400).json({ message: "Invalid event ID" });
+    if (err.name === "ValidationError")
+      return res.status(400).json({ message: err.message });
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+}
+
+async function deleteEvent(req, res) {
+  try {
+    const event = await Event.findByIdAndDelete(req.params.id);
+    if (!event) return res.status(404).json({ message: "Event not found" });
+
+    // Broadcast real-time Socket.IO notification to all connected clients (Screenshot 3)
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("eventNotification", {
+        type: "DELETE",
+        title: "Event Deleted / Cancelled",
+        message: `Admin deleted event: "${event.title}".`,
+        eventId: req.params.id,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    res.status(200).json({ message: "Event deleted successfully", event });
+  } catch (err) {
+    if (err.name === "CastError")
+      return res.status(400).json({ message: "Invalid event ID" });
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
 }
 
 module.exports = { getEvents, getEventById, createEvent, updateEvent, deleteEvent };

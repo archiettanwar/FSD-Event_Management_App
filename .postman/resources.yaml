@@ -1,0 +1,14 @@
+# Use this workspace to collaborate
+workspace:
+  id: 803986d4-6662-4889-8ede-a77ae6007b52
+
+localResources:
+  collections:
+    - ../Experiment 5 - Event Management API
+
+# Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
+
+cloudResources:
+  collections:
+    ../Experiment 5 - Event Management API: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+    ../postman/collections/Experiment 6 - JWT Auth & Role-Based Authorization: dd071b98-9a1a-42c3-87c0-d367ea9f053e

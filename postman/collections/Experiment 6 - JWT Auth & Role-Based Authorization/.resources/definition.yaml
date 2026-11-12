@@ -1,0 +1,9 @@
+$kind: collection
+description: "Postman collection for Experiment 6: JWT Authentication and Role-Based Authorization"
+variables:
+  - key: bearer_token_0jln
+    secret: true
+    disabled: false
+  - key: bearer_token_1dr7
+    secret: true
+    disabled: false

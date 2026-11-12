@@ -1,0 +1,171 @@
+{
+  "info": {
+    "_postman_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+    "name": "Experiment 6 - JWT Auth & Role-Based Authorization",
+    "description": "Postman collection for Experiment 6: JWT Authentication and Role-Based Authorization",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. User registration (POST)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Kavya Patel\",\n  \"email\": \"kavya@eventhub.com\",\n  \"password\": \"password123\",\n  \"role\": \"user\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/auth/register",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "auth", "register"]
+        },
+        "description": "Registers a new user and returns a signed JWT token (201 Created)."
+      },
+      "response": []
+    },
+    {
+      "name": "2. User login (POST)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"student@eventhub.com\",\n  \"password\": \"student123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "auth", "login"]
+        },
+        "description": "Authenticates user credentials and generates a signed JWT token (200 OK)."
+      },
+      "response": []
+    },
+    {
+      "name": "3. Successful token verification (GET)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjU0Y2YxMTVmNzBlMDI1ZWZjMmYzOCIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzk0NDYxMTY4LCJleHAiOjE3OTcwNTMxNjh9.Oi7ys10vPk6s3t2et3vTZqrLcptqNXNv5nBcusdUrf8",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5000/api/auth/me",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "auth", "me"]
+        },
+        "description": "Verifies valid JWT token and returns current user profile (200 OK)."
+      },
+      "response": []
+    },
+    {
+      "name": "4. Invalid login credentials",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"student@eventhub.com\",\n  \"password\": \"wrongpassword999\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "auth", "login"]
+        },
+        "description": "Demonstrates authentication error when bad credentials are sent (401 Unauthorized)."
+      },
+      "response": []
+    },
+    {
+      "name": "5. Accessing a protected endpoint without a token",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/auth/me",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "auth", "me"]
+        },
+        "description": "Demonstrates token absence error handling (401 Unauthorized)."
+      },
+      "response": []
+    },
+    {
+      "name": "6. Accessing an admin endpoint using a normal user's token",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjU0Y2YxMTVmNzBlMDI1ZWZjMmYzOCIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzk0NDYxMTY4LCJleHAiOjE3OTcwNTMxNjh9.Oi7ys10vPk6s3t2et3vTZqrLcptqNXNv5nBcusdUrf8",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5000/api/auth/admin-dashboard",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "auth", "admin-dashboard"]
+        },
+        "description": "Demonstrates Role-Based Access Control restriction when a regular user tries to access an admin route (403 Forbidden)."
+      },
+      "response": []
+    },
+    {
+      "name": "7. Successful access to an admin endpoint using an admin token",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZjU0Y2YxMTVmNzBlMDI1ZWZjMmYzOSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc5NDQ2MTE2OCwiZXhwIjoxNzk3MDUzMTY4fQ.dIBhbGRktLC2VUbeTcVPemZ5zhvUGzAPPHdvGbeU6Dk",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5000/api/auth/admin-dashboard",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "auth", "admin-dashboard"]
+        },
+        "description": "Demonstrates successful Role-Based Access Control when an admin user accesses an admin route (200 OK)."
+      },
+      "response": []
+    }
+  ]
+}
+

@@ -1,0 +1,7 @@
+$kind: http-request
+description: Verifies valid JWT token and returns current user profile (200 OK).
+url: http://localhost:5000/api/auth/me
+method: GET
+headers:
+  Authorization: "{{bearer_token_0jln}}"
+order: 3000

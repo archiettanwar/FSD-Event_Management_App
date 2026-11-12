@@ -1,0 +1,5 @@
+$kind: http-request
+description: Demonstrates error handling (400 Bad Request) when an invalid CastError ObjectId is queried.
+url: http://localhost:5000/api/events/invalid-event-id-123
+method: GET
+order: 7000

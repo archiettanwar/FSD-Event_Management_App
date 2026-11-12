@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import EventCard from "../components/EventCard";
 
 function Home() {
@@ -11,9 +12,12 @@ function Home() {
         <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">
           Find exciting events, connect with people, and register for experiences that interest you.
         </p>
-        <button className="mt-8 rounded-lg bg-indigo-600 px-6 py-3 font-semibold text-white transition hover:bg-indigo-700">
+        <Link
+          to="/events"
+          className="mt-8 inline-block rounded-lg bg-indigo-600 px-6 py-3 font-semibold text-white transition hover:bg-indigo-700 shadow-md"
+        >
           Explore Events
-        </button>
+        </Link>
       </section>
 
       {/* Events Section */}

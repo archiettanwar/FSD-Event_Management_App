@@ -1,0 +1,5 @@
+$kind: http-request
+description: Deletes an event from MongoDB Atlas by its ID.
+url: http://localhost:5000/api/events/6af547f7511cc6d590511807
+method: DELETE
+order: 5000

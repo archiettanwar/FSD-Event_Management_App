@@ -1,0 +1,17 @@
+$kind: http-request
+description: Creates a new event document in MongoDB Atlas.
+url: http://localhost:5000/api/events
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "title": "Tech Fest 2026",
+      "description": "Annual technology festival featuring coding hackathons, guest keynotes, and project competitions.",
+      "date": "2026-09-20",
+      "time": "10:00 AM",
+      "location": "Main Auditorium, Mumbai"
+    }
+order: 3000

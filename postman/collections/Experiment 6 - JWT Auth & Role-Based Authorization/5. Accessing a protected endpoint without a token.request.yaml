@@ -1,0 +1,5 @@
+$kind: http-request
+description: Demonstrates token absence error handling (401 Unauthorized).
+url: http://localhost:5000/api/auth/me
+method: GET
+order: 5000

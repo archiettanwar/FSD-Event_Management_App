@@ -1,0 +1,13 @@
+$kind: http-request
+description: Demonstrates error handling (400 Bad Request) when mandatory fields are omitted.
+url: http://localhost:5000/api/events
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "title": "Incomplete Event without required fields"
+    }
+order: 6000

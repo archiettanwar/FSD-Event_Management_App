@@ -1,0 +1,14 @@
+$kind: http-request
+description: Authenticates user credentials and generates a signed JWT token (200 OK).
+url: http://localhost:5000/api/auth/login
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "email": "student@eventhub.com",
+      "password": "student123"
+    }
+order: 2000

@@ -1,0 +1,7 @@
+$kind: http-request
+description: Demonstrates Role-Based Access Control restriction when a regular user tries to access an admin route (403 Forbidden).
+url: http://localhost:5000/api/auth/admin-dashboard
+method: GET
+headers:
+  Authorization: "{{bearer_token_0jln}}"
+order: 6000

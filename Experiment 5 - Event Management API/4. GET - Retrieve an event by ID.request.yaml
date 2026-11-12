@@ -1,0 +1,5 @@
+$kind: http-request
+description: Fetches a single event document by its MongoDB ObjectId.
+url: http://localhost:5000/api/events/6af543e27fc61942fa061443
+method: GET
+order: 2000

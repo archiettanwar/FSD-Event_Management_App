@@ -1,0 +1,5 @@
+$kind: http-request
+description: Retrieves the full list of events from MongoDB Atlas.
+url: http://localhost:5000/api/events
+method: GET
+order: 1000

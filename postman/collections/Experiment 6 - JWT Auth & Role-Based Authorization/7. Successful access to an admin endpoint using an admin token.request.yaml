@@ -1,0 +1,7 @@
+$kind: http-request
+description: Demonstrates successful Role-Based Access Control when an admin user accesses an admin route (200 OK).
+url: http://localhost:5000/api/auth/admin-dashboard
+method: GET
+headers:
+  Authorization: "{{bearer_token_1dr7}}"
+order: 7000
